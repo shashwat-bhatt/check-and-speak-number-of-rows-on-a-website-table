@@ -1,0 +1,79 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# Create a new instance of the Chrome driver
+driver = webdriver.Chrome()
+
+# Navigate to the login page
+driver.get("https://page_address/login.php")
+
+# Find the username field and enter the username
+username_field= driver.find_element(By.ID, "username")
+username_field.send_keys("abcd")
+
+
+# # Find the password field and enter the password
+password_field= driver.find_element(By.ID, "password")
+password_field.send_keys("1234")
+
+# Find the submit button and click it to submit the form
+submit_button = driver.find_element(By.ID, "login")
+submit_button.click()
+
+# Wait for the page to load after submitting the form
+time.sleep(5)
+
+# Find the load data button and click it to load the table
+load_data_button = driver.find_element(By.ID, "loaddata")
+load_data_button .click()
+
+# Wait for the page to load after submitting the form
+time.sleep(5)
+
+# Find the table element by ID using XPath
+table = driver.find_element(By.XPATH, "//table[@id=testtable]")
+
+# Find all rows in the table using XPath
+rows = table.find_elements(By.XPATH, "//tr")
+data = []
+i=0
+for row in rows:
+    if i==0:
+        cells = row.find_elements(By.XPATH, "./th")
+        row_data = []
+        for cell in cells:
+            row_data.append(cell.text)
+        i=1
+    cells = row.find_elements(By.XPATH, "./td")
+    row_data = []  
+    for cell in cells:
+        row_data.append(cell.text)
+    data.append(row_data)
+
+# Create a Pandas DataFrame from the data
+df = pd.DataFrame(data)
+
+print(df)
+a=0
+# count = len(df[df.iloc[:, 6] == 'desired_value'])
+# print(count)
+
+try:
+    count = len(df[df.iloc[:, 6] == 'desired_value'])
+    print(count)
+    engine = pyttsx3.init()
+    engine.say("There are, "+ str(count)+" rows cases")
+    engine.runAndWait()
+    a=0
+except IndexError:
+    print(0)
+    engine = pyttsx3.init()
+    engine.say("There are, "+ str(0)+" rows cases")
+    engine.runAndWait()
+    a=1
+
+# Close the browser window
+driver.quit()
